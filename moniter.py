@@ -23,14 +23,17 @@ class moniter():
 
 	def run(self):
 		while 1:
-			os.system('taskkill /T /F /IM '+ self.cf.image + '> logs/null')
+			result = os.system('taskkill /T /F /IM '+ self.cf.image + '> logs/null')  # kill the ie process
+			if (result !=0):
+				print "[Moniter Error]　没有找到IE进程"
 			time.sleep(3)
 			dbg = pydbg.pydbg()
 			dbg.load(self.cf.targetpath, command_line=self.InitPage)
+			#self.tellme(self.InitPage)
 			self.tellme(self.cf.image + ' running...' + 'pid='+str(dbg.pid))
 			time.sleep(1)
 			dbg_browser = self.crasher.hook(dbg)
-			if dbg_browser!=None:
+			if dbg_browser != None:
 				dbg_browser.run()
 				self.tellme(self.cf.target + ' crash... ')
 				dosfile = self.cf.logspath + '\\dos-' + hashlib.md5(str(datetime.datetime.now())).hexdigest() + '.html'
